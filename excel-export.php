@@ -9,13 +9,18 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/header.php';
  */
 
 $APPLICATION->SetTitle('Выгрузка в эксель');
-$APPLICATION->IncludeComponent('bitrix:ui.sidepanel.wrapper', '', [
-    'POPUP_COMPONENT_NAME' => 'otus:book.grid',
-    'POPUP_COMPONENT_TEMPLATE_NAME' => '',
-    'POPUP_COMPONENT_PARAMS' => [
-        'BOOK_PREFIX' => 'TEST ',
-        'ORM_CLASS' => BookTable::class,
-    ],
+// $APPLICATION->IncludeComponent('bitrix:ui.sidepanel.wrapper', '', [
+//     'POPUP_COMPONENT_NAME' => 'otus:book.grid',
+//     'POPUP_COMPONENT_TEMPLATE_NAME' => '',
+//     'POPUP_COMPONENT_PARAMS' => [
+//         'BOOK_PREFIX' => 'TEST ',
+//         'ORM_CLASS' => BookTable::class,
+//     ],
+// ]);
+
+$APPLICATION->IncludeComponent('otus:book.grid', '', [
+    'BOOK_PREFIX' => 'Книги дня 03.02.2026 ',
+    'ORM_CLASS' => BookTable::class,
 ]);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';

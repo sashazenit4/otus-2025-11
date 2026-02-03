@@ -20,6 +20,7 @@ class BookGrid extends \CBitrixComponent implements Controllerable, Errorable
     use ErrorableImplementation;
 
     protected const GRID_ID = 'BOOK_GRID';
+
     public function onPrepareComponentParams($arParams): array
     {
         $arParams['BOOK_PREFIX'] = strtolower($arParams['BOOK_PREFIX']);
@@ -30,6 +31,7 @@ class BookGrid extends \CBitrixComponent implements Controllerable, Errorable
     {
         return [
             'ORM_CLASS',
+            'BOOK_PREFIX',
         ];
     }
 
@@ -42,6 +44,7 @@ class BookGrid extends \CBitrixComponent implements Controllerable, Errorable
                 ],
             ],
             'addElement' => [],
+            'addTestBookElement' => [],
         ];
     }
 
@@ -161,6 +164,21 @@ class BookGrid extends \CBitrixComponent implements Controllerable, Errorable
                 'text' => Loc::getMessage('EXPORT_XLSX_BUTTON_TITLE'),
                 'color' => Color::PRIMARY,
             ],
+            [
+                'click' => 'BX.Otus.BookGrid.addBook',
+                'text' => 'Добавить книгу',
+                'color' => Color::PRIMARY_DARK,
+            ],
+            [
+                'click' => 'BX.Otus.BookGrid.addTestBookElement',
+                'text' => 'Добавить тестовую книгу',
+                'color' => Color::DANGER_DARK,
+            ],
+            [
+                'click' => 'BX.Otus.BookGrid.createTestElementViaModule',
+                'text' => 'Через модуль',
+                'color' => Color::DANGER,
+            ],
         ];
     }
 
@@ -172,6 +190,7 @@ class BookGrid extends \CBitrixComponent implements Controllerable, Errorable
 
         $this->arResult['BUTTONS'] = $this->getButtons();
         $this->prepareGridData();
+        // $this->arResult['SIGNED_PARAMETERS'] = $this->getSignedParameters();
 
         $this->includeComponentTemplate();
     }
@@ -366,7 +385,6 @@ class BookGrid extends \CBitrixComponent implements Controllerable, Errorable
 
     public function deleteElementAction(int $bookId): array
     {
-        $this->errorCollection = new ErrorCollection();
         try {
             $ormClass = $this->arParams['ORM_CLASS'];
             $ormClass::delete($bookId);
