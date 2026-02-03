@@ -2,7 +2,7 @@ BX.namespace('Otus.BookGrid');
 
 BX.Otus.BookGrid = {
     signedParams: null,
-    init: function(data) {
+    init: function (data) {
         this.signedParams = data.signedParams;
     },
     showMessage: function (message) {
@@ -48,10 +48,12 @@ BX.Otus.BookGrid = {
         });
     },
     addTestBookElement: function () {
+        const signedParams = BX.Otus.BookGrid.signedParams;
         BX.ajax.runComponentAction('otus:book.grid', 'addTestBookElement', {
             mode: 'class',
-            signedParameters: BX.Otus.BookGrid.signedParams,
+            signedParameters: signedParams,
             data: {
+                testParam: 1,
                 bookData: {
                     bookTitle: "Тестовая книга",
                     authors: [
@@ -96,8 +98,21 @@ BX.Otus.BookGrid = {
     },
     createTestElementViaModule: function () {
         BX.ajax.runAction(
-            'aholin:crmcustomtab.book.BookController.createTestElement',
-            {}
+            'aholin:crmcustomtab.book.Book.createTestElement',
+            {
+                data: {
+                    bookData: {
+                        bookTitle: "Тестовая книга",
+                        authors: [
+                            1, // идентификатор автора в таблица aholin_author
+                            2,
+                        ],
+                        publishYear: 2025,
+                        pageCount: 55,
+                        publishDate: '24.07.2025',
+                    }
+                }
+            }
         ).then(response => {
             BX.Otus.BookGrid.showMessage('Создана книга с ID=' + response.data.BOOK_ID);
             let grid = BX.Main.gridManager.getById('BOOK_GRID')?.instance;
@@ -111,21 +126,19 @@ BX.Otus.BookGrid = {
             BX.Otus.BookGrid.showMessage(errorMessage);
         });
     },
-
     addBook: function () {
         BX.Otus.BookGrid.showForm();
     },
-
     showForm: function () {
         let popup = BX.PopupWindowManager.create('book-add-form', null, {
-            content: '<form content="multipart/form-data" id="book-add-form"><input name="bookTitle"><input type="submit" value="Применить"></form>',
-            darkMode: true,
+            content: '<form content="multipart/form-data" id="book-add-form"><input name="bookTitle"><input name="bookFile" type="file"><input style="display:none;" type="submit" value="Применить"></form>',
+            darkMode: false,
             buttons: [
                 new BX.PopupWindowButton({
-                    text: "Добавить книгу" ,
-                    className: "book-form-popup-window-button-accept" ,
+                    text: "Добавить книгу",
+                    className: "book-form-popup-window-button-accept",
                     events: {
-                        click: function(){
+                        click: function () {
                             let submit = document.querySelector('#book-add-form input[type="submit"]');
                             let form = document.getElementById('book-add-form');
                             form.addEventListener('submit', function (event) {
@@ -133,16 +146,16 @@ BX.Otus.BookGrid = {
                                 BX.Otus.BookGrid.createBook(event.target);
                             });
                             submit.click();
-                            this.popupWindow.close();
+                            this.popupWindow.destroy();
                         }
                     }
                 }),
                 new BX.PopupWindowButton({
-                    text: "Закрыть" ,
-                    className: "book-form-button-link-cancel" ,
+                    text: "Закрыть",
+                    className: "book-form-button-link-cancel",
                     events: {
-                        click: function(){
-                            this.popupWindow.close();
+                        click: function () {
+                            this.popupWindow.destroy();
                         }
                     }
                 })
@@ -150,8 +163,8 @@ BX.Otus.BookGrid = {
         });
         popup.show();
     },
-
     createBook: function (form) {
+        // Первый способ сбора данных на JS перед отправкой на AJAX контроллер
         let data = new FormData(form);
         BX.ajax.runComponentAction('otus:book.grid', 'addBook', {
             mode: 'ajax',
@@ -169,5 +182,8 @@ BX.Otus.BookGrid = {
 
             BX.Otus.BookGrid.showMessage(errorMessage);
         });
+
+        // шаг 3 - отличия class.php контроллера от ajax.php контроллера
+        // шаг 4 - контроллеры в модулях
     },
 }

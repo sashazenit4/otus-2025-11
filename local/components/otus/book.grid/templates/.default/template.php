@@ -16,7 +16,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
  */
 
 Loader::includeModule('ui');
-Extension::load(['otus.modal.dialog', 'date']);
+Extension::load(['otus.modal.dialog', 'date', 'ajax']);
 foreach ($arResult['BUTTONS'] as $button) {
     Toolbar::addButton($button);
 }
@@ -121,30 +121,9 @@ $APPLICATION->IncludeComponent(
         });
     </script>
 <?php } ?>
+<!-- signedParams: '<?php echo ''; //= $arResult['SIGNED_PARAMETERS'] 
+                    ?>-->
 <script>
-    function successClosePopup() {
-        alert('Вы согласились прочитать хотя бы одну книгу!');
-        BX.Otus.Modal.Dialog.closePopup();
-    }
-
-    function closePopup() {
-        BX.Otus.Modal.Dialog.closePopup();
-    }
-
-    function showConfirmationBookPopup() {
-        BX.Otus.Modal.Dialog.init({
-            popupId: 'Book-confirmation-popup',
-            caption: 'Подтвердите оферту',
-            content: 'Подтвердите, что прочтёте все эти книги до конца лета!',
-            actionYes: successClosePopup,
-            actionNo: closePopup,
-            actionYesCaption: 'Да!!',
-            actionNoCaption: 'Нет((',
-        });
-        BX.Otus.Modal.Dialog.createPopup();
-        BX.Otus.Modal.Dialog.openPopup();
-    }
-
     BX.Otus.BookGrid.init({
         signedParams: '<?= $this->__component->getSignedParameters() ?>'
     });

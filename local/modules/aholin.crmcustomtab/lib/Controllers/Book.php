@@ -1,11 +1,14 @@
 <?php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+
+namespace Aholin\Crmcustomtab\Controllers;
 
 use Otus\Orm\BookTable;
+use Otus\Orm\AuthorTable;
 use Bitrix\Main\Error;
 use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Type\DateTime;
 
-class BookGridAjaxController extends Controller
+class Book extends Controller
 {
     public function configureActions(): array
     {
@@ -14,6 +17,10 @@ class BookGridAjaxController extends Controller
                 'prefilters' => [],
             ],
             'addBook' => [
+                'prefilters' => [],
+                'postfilters' => [],
+            ],
+            'createTestElement' => [
                 'prefilters' => [],
                 'postfilters' => [],
             ],
@@ -67,5 +74,43 @@ class BookGridAjaxController extends Controller
             $this->errorCollection->add([new Error($e->getMessage())]);
             return [];
         }
+    }
+
+    public function createTestElementAction(array $bookData): array
+    {
+        $newBookData = [
+            'TITLE' => $bookData['bookTitle'] ?? '',
+            'YEAR' => $bookData['publishYear'] ?? 2000,
+            'PAGES' => $bookData['pageCount'] ?? 0,
+            'PUBLISH_DATE' => DateTime::createFromText($bookData['publishDate'] ?? ''),
+        ];
+
+        $addResult = BookTable::add($newBookData);
+        if (!$addResult->isSuccess()) {
+            $this->errorCollection->add([new Error('Не удалось создать книгу')]);
+            return [];
+        }
+
+        $bookId = $addResult->getId();
+        $book = BookTable::getByPrimary($bookId)->fetchObject();
+
+        $authorIds = $bookData['authors'];
+        foreach ($authorIds as $authorId) {
+            $author = AuthorTable::getByPrimary($authorId)->fetchObject();
+            if ($author) {
+                $book->addToAuthors($author);
+            }
+        }
+
+        $updateResult = $book->save();
+
+        if (!$updateResult->isSuccess()) {
+            $this->errorCollection->add([new Error('Не удалось добавить авторов')]);
+            return [];
+        }
+
+        return [
+            'BOOK_ID' => $bookId
+        ];
     }
 }
