@@ -121,8 +121,7 @@ $APPLICATION->IncludeComponent(
         });
     </script>
 <?php } ?>
-<!-- signedParams: '<?php echo ''; //= $arResult['SIGNED_PARAMETERS'] 
-                    ?>-->
+
 <script>
     BX.Otus.BookGrid.init({
         signedParams: '<?= $this->__component->getSignedParameters() ?>'
