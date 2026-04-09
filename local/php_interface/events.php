@@ -38,3 +38,8 @@ $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', function (&$
     IblockEventHandler::onAfterAddDispatch($fields);
     return $fields;
 });
+
+$eventManager->addEventHandlerCompatible('rest', 'OnRestServiceBuildDescription', ['Otus\Rest\Events', 'OnRestServiceBuildDescriptionHandler']);
+$eventManager->addEventHandler('main', 'onAfterOtusBookAdd', function ($arParams) {
+    file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/logRestEvent.txt', 'PARAMS: ' . var_export($arParams, true) . PHP_EOL, FILE_APPEND);
+});
