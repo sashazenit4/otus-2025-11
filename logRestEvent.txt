@@ -1,0 +1,25 @@
+PARAMS: \Bitrix\Main\Event::__set_state(array(
+   'moduleId' => 'main',
+   'type' => 'onAfterOtusBookAdd',
+   'parameters' => 
+  array (
+    'BOOK' => 
+    array (
+      'TITLE' => 'Новая книга, на которой я тестирую обработчик REST события',
+    ),
+    'ID' => 3,
+  ),
+   'parametersLoader' => NULL,
+   'filter' => NULL,
+   'sender' => NULL,
+   'debugMode' => false,
+   'debugInfo' => 
+  array (
+  ),
+   'results' => 
+  array (
+  ),
+   'exceptions' => 
+  array (
+  ),
+))
